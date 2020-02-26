@@ -1,6 +1,6 @@
 //
 //  MotionProvider.swift
-//  
+//
 //
 //  Created by Luis on 21.09.19.
 //  Copyright © 2019 himbeles. All rights reserved.

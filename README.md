@@ -2,7 +2,7 @@
 
 A `Combine`-based CoreMotion data provider.
 
-On every update of the location, it provides a struct    
+On every update of the device motion data, it provides a struct    
 ```
 struct MotionData {
     var timestamp : Date
