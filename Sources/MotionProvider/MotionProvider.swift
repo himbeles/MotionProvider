@@ -37,14 +37,10 @@ class MotionProvider: ObservableObject {
     var fakeMotionTimer : Timer?
     var updateInterval : Double
     
-    @Published private var _running = false
+    @Published private var _active = false
     
-    var running: Bool {
-        set(newRunning) {
-            if newRunning {self.start()}
-            else {self.stop()}
-        }
-        get { return self._running }
+    var active: Bool {
+        get { self._active }
     }
     
     public let objectWillChange = PassthroughSubject<MotionData,Never>()
@@ -56,7 +52,7 @@ class MotionProvider: ObservableObject {
     }
     
     func start() {
-        if !self._running {
+        if !self._active {
             if motionManager.isDeviceMotionAvailable {
                 print("motion started")
                 motionManager.deviceMotionUpdateInterval = updateInterval
@@ -85,7 +81,7 @@ class MotionProvider: ObservableObject {
                         self.currentMotion = randomMotionData()
                 }
             }
-            self._running = true
+            self._active = true
         }
     }
     
@@ -100,6 +96,6 @@ class MotionProvider: ObservableObject {
             }
             print("fake motion stopped")
         }
-        self._running = false
+        self._active = false
     }
 }
