@@ -35,6 +35,7 @@ class MotionProvider: ObservableObject {
     private var MotionQueue = OperationQueue.main
     let motionManager = CMMotionManager()
     var fakeMotionTimer : Timer?
+    var updateInterval : Double
     
     @Published private var _running = false
     
@@ -58,7 +59,7 @@ class MotionProvider: ObservableObject {
         if !self._running {
             if motionManager.isDeviceMotionAvailable {
                 print("motion started")
-                motionManager.deviceMotionUpdateInterval = ActivityModelConsts.sensorsUpdateInterval
+                motionManager.deviceMotionUpdateInterval = updateInterval
                 motionManager.showsDeviceMovementDisplay = true
                 motionManager.startDeviceMotionUpdates(using: .xArbitraryZVertical,
                                                        to: MotionQueue) { (motion, error) in
@@ -78,7 +79,7 @@ class MotionProvider: ObservableObject {
                 print("fake motion started")
                 
                 self.fakeMotionTimer = Timer.scheduledTimer(
-                    withTimeInterval: ActivityModelConsts.sensorsUpdateInterval,
+                    withTimeInterval: updateInterval,
                     repeats: true) { timer in
                         
                         self.currentMotion = randomMotionData()
