@@ -10,17 +10,17 @@ import Foundation
 import CoreMotion
 import Combine
 
-struct MotionData {
-    var timestamp : Date
-    var acc_x : Double
-    var acc_y : Double
-    var acc_z : Double
-    var rot_x : Double
-    var rot_y : Double
-    var rot_z : Double
+public struct MotionData {
+    public var timestamp : Date
+    public var acc_x : Double
+    public var acc_y : Double
+    public var acc_z : Double
+    public var rot_x : Double
+    public var rot_y : Double
+    public var rot_z : Double
 }
 
-func randomMotionData() -> MotionData {
+public func randomMotionData() -> MotionData {
     return MotionData(
         timestamp: Date(),
         acc_x: Double.random(in: -1...1),
@@ -31,27 +31,34 @@ func randomMotionData() -> MotionData {
         rot_z: Double.random(in: -1...1))
 }
 
-class MotionProvider: ObservableObject {
+public class MotionProvider: ObservableObject {
     private var MotionQueue = OperationQueue.main
     let motionManager = CMMotionManager()
     var fakeMotionTimer : Timer?
-    var updateInterval : Double
+    public var updateInterval : Double
     
-    @Published private var _active = false
+    @Published private var _active : Bool
     
-    var active: Bool {
+    public var active: Bool {
         get { self._active }
     }
     
-    public let objectWillChange = PassthroughSubject<MotionData,Never>()
+    public init(){
+        _active = false
+        updateInterval = 0.05
+    }
     
-    public private(set) var currentMotion: MotionData = MotionData(timestamp: Date(), acc_x: 0, acc_y: 0, acc_z: 0, rot_x: 0, rot_y: 0, rot_z: 0) {
+    public let motionWillChange = PassthroughSubject<MotionData, Never>()
+        
+    @Published public private(set) var currentMotion: MotionData? {
         willSet {
-            objectWillChange.send(newValue)
+            if let n=newValue {
+                motionWillChange.send(n)
+            }
         }
     }
     
-    func start() {
+    public func start() {
         if !self._active {
             if motionManager.isDeviceMotionAvailable {
                 print("motion started")
@@ -85,7 +92,7 @@ class MotionProvider: ObservableObject {
         }
     }
     
-    func stop() {
+    public func stop() {
         if motionManager.isDeviceMotionAvailable {
             motionManager.stopDeviceMotionUpdates()
             print("motion stopped")
