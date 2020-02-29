@@ -33,6 +33,14 @@ public func randomMotionData() -> MotionData {
         rot_z: Double.random(in: -1...1))
 }
 
+/**
+ A Combine-based CoreMotion data provider as a Swift Package
+
+ On every update of the device motion data (accelerometer and gyroscope), it provides a struct `MotionData`
+ through a `PassthroughSubject<MotionData, Never>` called `motionWillChange`.
+
+ If real location data is unavailable on the device (e.g., the Simulator), it provides random fake-motion data scheduled by a timer.
+*/
 public class MotionProvider: ObservableObject {
     private var motionQueue = OperationQueue.main
     let motionManager = CMMotionManager()
