@@ -10,16 +10,18 @@ import Foundation
 import CoreMotion
 import Combine
 
+/// Struct that holds userAcceleration and rotationRate data from accelerometer and gyroscope
 public struct MotionData {
     public var timestamp : Date
-    public var acc_x : Double
-    public var acc_y : Double
-    public var acc_z : Double
-    public var rot_x : Double
-    public var rot_y : Double
-    public var rot_z : Double
+    public var acc_x : Double // userAcceleration.x
+    public var acc_y : Double // userAcceleration.y
+    public var acc_z : Double // userAcceleration.z
+    public var rot_x : Double // rotationRate.x
+    public var rot_y : Double // rotationRate.y
+    public var rot_z : Double // rotationRate.z
 }
 
+/// Generate `MotionData` with random values
 public func randomMotionData() -> MotionData {
     return MotionData(
         timestamp: Date(),
@@ -32,24 +34,28 @@ public func randomMotionData() -> MotionData {
 }
 
 public class MotionProvider: ObservableObject {
-    private var MotionQueue = OperationQueue.main
+    private var motionQueue = OperationQueue.main
     let motionManager = CMMotionManager()
     var fakeMotionTimer : Timer?
+    
+    /// the sensor update interval in seconds
     public var updateInterval : Double
     
     @Published private var _active : Bool
     
+    /// indicates if MotionProvider is querying sensor values
     public var active: Bool {
         get { self._active }
     }
     
     public init(){
         _active = false
-        updateInterval = 0.05
+        updateInterval = 0.05 // this is the maximum possible hardware sensor refresh rate as of 2020
     }
     
     public let motionWillChange = PassthroughSubject<MotionData, Never>()
-        
+    
+    /// the current motion data reading as a `MotionData` struct
     @Published public private(set) var currentMotion: MotionData? {
         willSet {
             if let n=newValue {
@@ -58,6 +64,7 @@ public class MotionProvider: ObservableObject {
         }
     }
     
+    /// start the `MotionProvider` data acquisition
     public func start() {
         if !self._active {
             if motionManager.isDeviceMotionAvailable {
@@ -65,7 +72,7 @@ public class MotionProvider: ObservableObject {
                 motionManager.deviceMotionUpdateInterval = updateInterval
                 motionManager.showsDeviceMovementDisplay = true
                 motionManager.startDeviceMotionUpdates(using: .xArbitraryZVertical,
-                                                       to: MotionQueue) { (motion, error) in
+                                                       to: motionQueue) { (motion, error) in
                                                         if let motion = motion {
                                                             self.currentMotion = MotionData(
                                                                 timestamp: Date(),
@@ -92,6 +99,7 @@ public class MotionProvider: ObservableObject {
         }
     }
     
+    /// stop the `MotionProvider` data acquisition
     public func stop() {
         if motionManager.isDeviceMotionAvailable {
             motionManager.stopDeviceMotionUpdates()
