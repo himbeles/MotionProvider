@@ -1,8 +1,8 @@
 # MotionProvider
 
-A `Combine`-based CoreMotion data provider.
+A Combine-based CoreMotion data provider as a Swift Package
 
-On every update of the device motion data, it provides a struct    
+On every update of the device motion data (accelerometer and gyroscope), it provides a struct    
 
 ```swift
 struct MotionData {
