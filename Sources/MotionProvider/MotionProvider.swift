@@ -37,7 +37,7 @@ public func randomMotionData() -> MotionData {
  A Combine-based CoreMotion data provider
 
  On every update of the device motion data (accelerometer and gyroscope), it provides a struct `MotionData`
- through a `PassthroughSubject<MotionData, Never>` called `motionWillChange`.
+ through a `PassthroughSubject<MotionData, Never>` called `motionWillChange`, as well as a published property `motion`.
 
  If real location data is unavailable on the device (e.g., the Simulator), it provides random fake-motion data scheduled by a timer.
 */
@@ -61,10 +61,15 @@ public class MotionProvider: ObservableObject {
         updateInterval = 0.05 // this is the maximum possible hardware sensor refresh rate as of 2020
     }
     
+    /// Is emitted when the `currentMotion` property changes.
     public let motionWillChange = PassthroughSubject<MotionData, Never>()
     
-    /// the current motion data reading as a `MotionData` struct
-    @Published public private(set) var currentMotion: MotionData? {
+    /**
+     The current motion data as a `MotionData` struct.
+     
+     Updates of its value trigger both the `objectWillChange` and the `motionWillChange` PassthroughSubjects.
+     */
+    @Published public private(set) var motion: MotionData? {
         willSet {
             if let n=newValue {
                 motionWillChange.send(n)
@@ -82,7 +87,7 @@ public class MotionProvider: ObservableObject {
                 motionManager.startDeviceMotionUpdates(using: .xArbitraryZVertical,
                                                        to: motionQueue) { (motion, error) in
                                                         if let motion = motion {
-                                                            self.currentMotion = MotionData(
+                                                            self.motion = MotionData(
                                                                 timestamp: Date(),
                                                                 acc_x: motion.userAcceleration.x,
                                                                 acc_y: motion.userAcceleration.y,
@@ -100,7 +105,7 @@ public class MotionProvider: ObservableObject {
                     withTimeInterval: updateInterval,
                     repeats: true) { timer in
                         
-                        self.currentMotion = randomMotionData()
+                        self.motion = randomMotionData()
                 }
             }
             self._active = true

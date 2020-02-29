@@ -15,7 +15,7 @@ struct MotionData {
     var rot_z : Double // rotationRate.z
 }
 ```
-through a `PassthroughSubject<MotionData, Never>` called `motionWillChange`. 
+through a `PassthroughSubject<MotionData, Never>` called `motionWillChange`, as well as a published property `motion`.
 
 If real location data is unavailable on the device (e.g., the Simulator), it provides random fake-motion data scheduled by a timer. 
 
