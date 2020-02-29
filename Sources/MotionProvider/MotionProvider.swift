@@ -34,7 +34,7 @@ public func randomMotionData() -> MotionData {
 }
 
 /**
- A Combine-based CoreMotion data provider
+ A Combine-based CoreMotion data provider.
 
  On every update of the device motion data (accelerometer and gyroscope), it provides a struct `MotionData`
  through a `PassthroughSubject<MotionData, Never>` called `motionWillChange`, as well as a published property `motion`.

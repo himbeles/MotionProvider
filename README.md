@@ -1,6 +1,6 @@
 # MotionProvider
 
-A Combine-based CoreMotion data provider as a Swift Package
+A Combine-based CoreMotion data provider as a Swift Package.
 
 On every update of the device motion data (accelerometer and gyroscope), it provides a struct    
 
@@ -42,6 +42,8 @@ cancellableMotion = motionProvider.motionWillChange.sink { md in
 
 The function `handleMotion` in the `sink` closure is executed on every `MotionData` object sent by the `MotionProvider`.
 
+Also, the `MotionProvider` is an ObservableObject which has a published property `motion` that updates the ObservableObject.
+This dynamic property can directly be accessed in SwiftUI.
 
 ### Stopping the Motion Provider
 
