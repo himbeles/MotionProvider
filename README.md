@@ -40,7 +40,7 @@ cancellableMotion = motionProvider.motionWillChange.sink { md in
 }
 ```
 
-The function `handleMotion` in the `sink` closure is executed on every `MotionData` object send by the `MotionProvider`.
+The function `handleMotion` in the `sink` closure is executed on every `MotionData` object sent by the `MotionProvider`.
 
 
 ### Stopping the Motion Provider
