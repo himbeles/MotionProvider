@@ -2,7 +2,7 @@
 //  MotionProvider.swift
 //
 //
-//  Created by Luis on 21.09.19.
+//  Created by Luis R on 21.09.19
 //  Copyright © 2019 himbeles. All rights reserved.
 //
 
@@ -34,7 +34,7 @@ public func randomMotionData() -> MotionData {
 }
 
 /**
- A Combine-based CoreMotion data provider as a Swift Package
+ A Combine-based CoreMotion data provider
 
  On every update of the device motion data (accelerometer and gyroscope), it provides a struct `MotionData`
  through a `PassthroughSubject<MotionData, Never>` called `motionWillChange`.
@@ -46,12 +46,12 @@ public class MotionProvider: ObservableObject {
     let motionManager = CMMotionManager()
     var fakeMotionTimer : Timer?
     
-    /// the sensor update interval in seconds
+    /// The sensor update interval in seconds.
     public var updateInterval : Double
     
     @Published private var _active : Bool
     
-    /// indicates if MotionProvider is querying sensor values
+    /// Indicates if MotionProvider is querying sensor values.
     public var active: Bool {
         get { self._active }
     }
@@ -72,7 +72,7 @@ public class MotionProvider: ObservableObject {
         }
     }
     
-    /// start the `MotionProvider` data acquisition
+    /// Start the `MotionProvider` data acquisition.
     public func start() {
         if !self._active {
             if motionManager.isDeviceMotionAvailable {
