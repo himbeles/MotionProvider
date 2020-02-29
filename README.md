@@ -36,7 +36,7 @@ Subscribe to the `motionWillChange` subject and store the returned `Cancellable`
 
 ```swift
 cancellableMotion = motionProvider.motionWillChange.sink { md in
-    handleMotion(motionData: md)
+    handleMotion(md)
 }
 ```
 
