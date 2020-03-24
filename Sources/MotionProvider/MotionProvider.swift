@@ -58,7 +58,7 @@ public class MotionProvider: ObservableObject {
     
     public init(){
         _active = false
-        updateInterval = 0.005 // this is the maximum possible hardware sensor refresh (200Hz) rate as of 2020
+        updateInterval = 0.01 // this is the maximum possible hardware sensor refresh (100Hz) rate as of 2020
     }
     
     /// Is emitted when the `currentMotion` property changes.
