@@ -46,6 +46,8 @@ public class MotionProvider: ObservableObject {
     let motionManager = CMMotionManager()
     var fakeMotionTimer : Timer?
     
+    private let formatter = DateFormatter()
+        
     /// The sensor update interval in seconds.
     public var updateInterval : Double
     
@@ -59,6 +61,9 @@ public class MotionProvider: ObservableObject {
     public init(){
         _active = false
         updateInterval = 0.01 // this is the maximum possible hardware sensor refresh (100Hz) rate as of 2020
+        
+        formatter.dateFormat = "hh:mm:ss.SSS" //If you dont want static "UTC" you can go for ZZZZ instead of 'UTC'Z.
+        formatter.timeZone = TimeZone(abbreviation: "IST")
     }
     
     /// Is emitted when the `currentMotion` property changes.
@@ -79,33 +84,51 @@ public class MotionProvider: ObservableObject {
     
     /// Start the `MotionProvider` data acquisition.
     public func start() {
+        var i = 0
+        var rawMotionStartTime : Double = 0
+        var startDate : Date = Date()
+
+        
         if !self._active {
             if motionManager.isDeviceMotionAvailable {
                 print("motion started")
                 motionManager.deviceMotionUpdateInterval = updateInterval
                 motionManager.showsDeviceMovementDisplay = true
                 motionManager.startDeviceMotionUpdates(using: .xArbitraryZVertical,
-                                                       to: motionQueue) { (motion, error) in
+                                                       to: motionQueue) { [self] (motion, error) in
                                                         if let motion = motion {
+                                                            if (i==0) {
+                                                                startDate = Date()
+                                                                rawMotionStartTime = motion.timestamp
+                                                            }
+                                                            
+                                                            /// time stamp is calculated as start time from calendar + time delta in seconds from motion sensor
+                                                            let timestamp = startDate + (motion.timestamp - rawMotionStartTime)
+                                                            
                                                             self.motion = MotionData(
-                                                                timestamp: Date(),
+                                                                timestamp: timestamp,
                                                                 acc_x: motion.userAcceleration.x,
                                                                 acc_y: motion.userAcceleration.y,
                                                                 acc_z: motion.userAcceleration.z,
                                                                 rot_x: motion.rotationRate.x,
                                                                 rot_y: motion.rotationRate.y,
                                                                 rot_z: motion.rotationRate.z)
+                                                            //print(i, self.formatter.string(from: self.motion!.timestamp))
+                                                            i+=1
                                                         }
                 }
             }
             else {
                 print("fake motion started")
-                
                 self.fakeMotionTimer = Timer.scheduledTimer(
                     withTimeInterval: updateInterval,
                     repeats: true) { timer in
-                        
-                        self.motion = randomMotionData()
+                        i+=1
+                        var m = randomMotionData()
+                        m.timestamp = timer.fireDate
+                        self.motion = m
+                    
+                        print(i, self.formatter.string(from: self.motion!.timestamp))
                 }
             }
             self._active = true
@@ -119,7 +142,7 @@ public class MotionProvider: ObservableObject {
             print("motion stopped")
         }
         else {
-            if let timer = self.fakeMotionTimer{
+            if let timer = self.fakeMotionTimer {
                 timer.invalidate()
             }
             print("fake motion stopped")
@@ -127,3 +150,5 @@ public class MotionProvider: ObservableObject {
         self._active = false
     }
 }
+
+
