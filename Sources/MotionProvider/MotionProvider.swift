@@ -128,7 +128,7 @@ public class MotionProvider: ObservableObject {
                         m.timestamp = timer.fireDate
                         self.motion = m
                     
-                        print(i, self.formatter.string(from: self.motion!.timestamp))
+                        //print(i, self.formatter.string(from: self.motion!.timestamp))
                 }
             }
             self._active = true
