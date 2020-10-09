@@ -10,7 +10,7 @@ import Foundation
 import CoreMotion
 import Combine
 
-/// Struct that holds userAcceleration and rotationRate data from accelerometer and gyroscope
+/// Holds userAcceleration and rotationRate data from accelerometer and gyroscope
 public struct MotionData {
     public var timestamp : Date
     public var acc_x : Double // userAcceleration.x
